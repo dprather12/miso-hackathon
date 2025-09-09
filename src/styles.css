@@ -1,21 +1,32 @@
 body {
   margin: 0;
-  background: black;
-  color: white;
+  background: #fffbe6;
+  color: black;
   font-family: sans-serif;
   overflow: hidden;
 }
 
+
+@property --sx {
+  syntax: '<length>';
+  initial-value: 0px;
+  inherits: false;
+}
+
+@property --sy {
+  syntax: '<length>';
+  initial-value: 0px;
+  inherits: false;
+}
 
 .spotlight-overlay {
   position: fixed;
   inset: 0;
   pointer-events: none;
   background: radial-gradient(circle 150px at var(--sx) var(--sy),
-    rgba(255,255,200,0.2) 0,
-    rgba(255,255,200,0.2) 120px,
-    rgba(0,0,0,0.9) 150px);
-  transition: background 3s linear;
+    transparent 0 120px,
+    rgba(0,0,0,1) 150px);
+  transition: --sx 3s linear, --sy 3s linear;
   z-index: 1000;
 }
 
@@ -32,24 +43,27 @@ form {
 label, input {
   display: block;
   margin: 10px 0;
-  opacity: 0;
-  transition: opacity 0.3s;
+  color: green;
+}
+
+input {
+  border: 1px solid green;
+  background: #eaffea;
 }
 
 .revealed {
-  opacity: 1 !important;
   position: relative;
   z-index: 1001;
-  background: black;
-  color: white;
+  background: #eaffea;
+  color: green;
 }
 
 .mushroom {
-  cursor: url('assets/mushroom-cursor.svg') 16 16, auto;
+  cursor: url('assets/mushroom-cursor.png') 16 16, auto;
 }
 
 .bowser {
-  cursor: url('assets/bowser-cursor.svg') 16 16, pointer;
+  cursor: url('assets/bowser-cursor.png') 16 16, pointer;
 }
 
 .ghost {
@@ -57,7 +71,7 @@ label, input {
   width: 50px;
   height: 50px;
   display: none;
-  z-index: 900;
+  z-index: 1100;
 }
 
 .dead-mario {
@@ -65,7 +79,7 @@ label, input {
   width: 50px;
   height: 50px;
   display: none;
-  z-index: 950;
+  z-index: 1150;
   animation: fall 2s forwards;
 }
 
@@ -75,18 +89,66 @@ label, input {
 
 .submit-btn {
   position: absolute;
-  z-index: 1100;
+  z-index: 500;
   background: red;
   color: white;
+  padding: 12px 24px;
+  font-size: 1.2em;
   transition: left 3s linear, top 3s linear;
 }
 
-.error {
-  color: red;
+.submit-btn:hover {
+  z-index: 1001;
 }
 
 .header-image {
   display: block;
   margin: 0 auto;
+  position: relative;
+  z-index: 1001;
+  opacity: 0.8;
+}
+
+.game-over {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+  z-index: 2000;
+}
+
+.game-over button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 0.7em;
+}
+
+.pigs-popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.5em;
+  z-index: 3000;
+}
+
+.pigs-popup img {
+  width: 200px;
+  height: auto;
+  margin-top: 20px;
+}
+
+.pigs-popup button {
+  margin-top: 20px;
+  padding: 8px 16px;
 }
 
