@@ -1,0 +1,76 @@
+body {
+  margin: 0;
+  background: black;
+  color: white;
+  font-family: sans-serif;
+  overflow: hidden;
+}
+
+.spotlight-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  pointer-events: none;
+  clip-path: circle(120px at var(--sx) var(--sy));
+  transition: clip-path 0.3s;
+  z-index: 1000;
+}
+
+form {
+  position: relative;
+  padding: 20px;
+}
+
+label, input {
+  display: block;
+  margin: 10px 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.revealed {
+  opacity: 1 !important;
+  position: relative;
+  z-index: 1001;
+  background: black;
+  color: white;
+}
+
+.mushroom {
+  cursor: url('assets/mushroom-cursor.svg') 16 16, auto;
+}
+
+.bowser {
+  cursor: url('assets/bowser-cursor.svg') 16 16, pointer;
+}
+
+.ghost {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  display: none;
+  z-index: 900;
+}
+
+.dead-mario {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  display: none;
+  z-index: 950;
+  animation: fall 2s forwards;
+}
+
+@keyframes fall {
+  to { transform: translateY(100vh); opacity: 0; }
+}
+
+.submit-btn {
+  position: absolute;
+  z-index: 900;
+}
+
+.error {
+  color: red;
+}
+
