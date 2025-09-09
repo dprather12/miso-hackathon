@@ -51,6 +51,10 @@ input {
   background: #eaffea;
 }
 
+input:hover {
+  cursor: url('/assets/mushroom-cursor.png') 16 16, auto;
+}
+
 .revealed {
   position: relative;
   z-index: 1001;
@@ -58,13 +62,6 @@ input {
   color: green;
 }
 
-.mushroom {
-  cursor: url('assets/mushroom-cursor.png') 16 16, auto;
-}
-
-.bowser {
-  cursor: url('assets/bowser-cursor.png') 16 16, pointer;
-}
 
 .ghost {
   position: absolute;
@@ -99,6 +96,7 @@ input {
 
 .submit-btn:hover {
   z-index: 1001;
+  cursor: url('/assets/bowser-cursor.png') 16 16, pointer;
 }
 
 .header-image {

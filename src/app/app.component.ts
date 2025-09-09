@@ -13,40 +13,40 @@ import { FormsModule } from '@angular/forms';
 
     <div class="field" [ngStyle]="pos('src')">
       <label [class.revealed]="revealed.has('src')">Source IP address</label>
-      <input name="src" class="mushroom" required pattern="[0-9.]*" autocomplete="off"
+      <input name="src" required pattern="[0-9.]*" autocomplete="off"
              [(ngModel)]="src" (click)="reveal('src')" (focus)="startChase('src')" (blur)="stopChase()"
              [class.revealed]="revealed.has('src')" />
     </div>
 
     <div class="field" [ngStyle]="pos('dest')">
       <label [class.revealed]="revealed.has('dest')">Destination IP address</label>
-      <input name="dest" class="mushroom" required pattern="[0-9.]*" autocomplete="off"
+      <input name="dest" required pattern="[0-9.]*" autocomplete="off"
              [(ngModel)]="dest" (click)="reveal('dest')" (focus)="startChase('dest')" (blur)="stopChase()"
              [class.revealed]="revealed.has('dest')" />
     </div>
 
     <div class="field" [ngStyle]="pos('mac')">
       <label [class.revealed]="revealed.has('mac')">MAC Address of your first computer</label>
-      <input name="mac" class="mushroom" required pattern="[0-9.]*" autocomplete="off"
+      <input name="mac" required pattern="[0-9.]*" autocomplete="off"
              [(ngModel)]="mac" (click)="reveal('mac')" (focus)="startChase('mac')" (blur)="stopChase()"
              [class.revealed]="revealed.has('mac')" />
     </div>
 
     <div class="field" [ngStyle]="pos('modem')">
       <label [class.revealed]="revealed.has('modem')">IP address of your first 56k baud modem</label>
-      <input name="modem" class="mushroom" required pattern="[0-9.]*" autocomplete="off"
+      <input name="modem" required pattern="[0-9.]*" autocomplete="off"
              [(ngModel)]="modem" (click)="reveal('modem')" (focus)="startChase('modem')" (blur)="stopChase()"
              [class.revealed]="revealed.has('modem')" />
     </div>
 
     <button #submitBtn type="submit" class="submit-btn" [ngStyle]="{left: submitX+'px', top: submitY+'px'}"
-            (mouseenter)="pauseSubmit()" (mouseleave)="resumeSubmit()" [class.bowser]="hoverSubmit">Submit</button>
+            (mouseenter)="pauseSubmit()" (mouseleave)="resumeSubmit()">Submit</button>
   </form>
 
   <img src="assets/ghost.png" class="ghost" #ghost [ngStyle]="{left: ghostX+'px', top: ghostY+'px', display: ghostVisible ? 'block':'none'}" />
   <img src="assets/dead-mario.png" class="dead-mario" #dead [ngStyle]="{left: deadX+'px', top: deadY+'px', display: deadVisible ? 'block':'none'}" />
   <div class="game-over" *ngIf="gameOver">
-    <div>Game Over</div>
+    <div>No Firewall for you!</div>
     <button (click)="tryAgain()">Try Again?</button>
   </div>
   <div class="pigs-popup" *ngIf="pigsPopup">
