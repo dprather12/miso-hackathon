@@ -9,31 +9,47 @@ import { FormsModule } from '@angular/forms';
   template: `
   <div class="spotlight-overlay" [ngStyle]="{'--sx.px': spotlightX, '--sy.px': spotlightY}"></div>
   <form (ngSubmit)="submit()" #form="ngForm">
-    <h1 #header class="revealed">Firewall Request Form</h1>
+    <img #header src="assets/firewall-header.svg" alt="Firewall Request Form" class="header-image">
 
-    <label [class.revealed]="revealed.has('src')">Field 1a: Source IP address</label>
-    <input name="src" class="mushroom" required pattern="[0-9.]*" [(ngModel)]="src" (click)="reveal('src')" />
+    <div class="field" [ngStyle]="pos('src')">
+      <label [class.revealed]="revealed.has('src')">Source IP address</label>
+      <input name="src" class="mushroom" required pattern="[0-9.]*" [(ngModel)]="src" (click)="reveal('src')" [class.revealed]="revealed.has('src')" />
+    </div>
 
-    <label [class.revealed]="revealed.has('src2')">Field 1b: Confirm source IP address</label>
-    <input name="src2" class="mushroom" required pattern="[0-9.]*" [(ngModel)]="src2" (keydown)="transform($event,2)" (click)="reveal('src2'); activateGhost($event)" />
+    <div class="field" [ngStyle]="pos('src2')">
+      <label [class.revealed]="revealed.has('src2')">Confirm source IP address</label>
+      <input name="src2" class="mushroom" required pattern="[0-9.]*" [(ngModel)]="src2" (keydown)="transform($event,2)" (click)="reveal('src2')" [class.revealed]="revealed.has('src2')" />
+    </div>
 
-    <label [class.revealed]="revealed.has('dest')">Field 2a: Destination IP address</label>
-    <input name="dest" class="mushroom" required pattern="[0-9.]*" [(ngModel)]="dest" (click)="reveal('dest')" />
+    <div class="field" [ngStyle]="pos('dest')">
+      <label [class.revealed]="revealed.has('dest')">Destination IP address</label>
+      <input name="dest" class="mushroom" required pattern="[0-9.]*" [(ngModel)]="dest" (click)="reveal('dest')" [class.revealed]="revealed.has('dest')" />
+    </div>
 
-    <label [class.revealed]="revealed.has('dest2')">Field 2b: Confirm Destination IP address</label>
-    <input name="dest2" class="mushroom" required pattern="[0-9.]*" [(ngModel)]="dest2" (keydown)="transform($event,4)" (click)="reveal('dest2'); activateGhost($event)" />
+    <div class="field" [ngStyle]="pos('dest2')">
+      <label [class.revealed]="revealed.has('dest2')">Confirm destination IP address</label>
+      <input name="dest2" class="mushroom" required pattern="[0-9.]*" [(ngModel)]="dest2" (keydown)="transform($event,4)" (click)="reveal('dest2')" [class.revealed]="revealed.has('dest2')" />
+    </div>
 
-    <label [class.revealed]="revealed.has('dest3')">Field 3: Destination IP address</label>
-    <input name="dest3" class="mushroom" required pattern="[0-9.]*" [(ngModel)]="dest3" (click)="reveal('dest3')" />
+    <div class="field" [ngStyle]="pos('dest3')">
+      <label [class.revealed]="revealed.has('dest3')">Destination IP address</label>
+      <input name="dest3" class="mushroom" required pattern="[0-9.]*" [(ngModel)]="dest3" (click)="reveal('dest3')" [class.revealed]="revealed.has('dest3')" />
+    </div>
 
-    <label [class.revealed]="revealed.has('mac')">Field 4: MAC Address of your first computer</label>
-    <input name="mac" class="mushroom" required pattern="[0-9.]*" [(ngModel)]="mac" (click)="reveal('mac')" />
+    <div class="field" [ngStyle]="pos('mac')">
+      <label [class.revealed]="revealed.has('mac')">MAC Address of your first computer</label>
+      <input name="mac" class="mushroom" required pattern="[0-9.]*" [(ngModel)]="mac" (click)="reveal('mac')" [class.revealed]="revealed.has('mac')" />
+    </div>
 
-    <label [class.revealed]="revealed.has('modem')">Field 5: IP address of your first 56k baud modem</label>
-    <input name="modem" class="mushroom" required pattern="[0-9.]*" [(ngModel)]="modem" (click)="reveal('modem')" />
+    <div class="field" [ngStyle]="pos('modem')">
+      <label [class.revealed]="revealed.has('modem')">IP address of your first 56k baud modem</label>
+      <input name="modem" class="mushroom" required pattern="[0-9.]*" [(ngModel)]="modem" (click)="reveal('modem')" [class.revealed]="revealed.has('modem')" />
+    </div>
 
-    <label [class.revealed]="revealed.has('field6')">Field 6:</label>
-    <input name="field6" class="mushroom" required pattern="[0-9.]*" [(ngModel)]="field6" (click)="reveal('field6')" />
+    <div class="field" [ngStyle]="pos('field6')">
+      <label [class.revealed]="revealed.has('field6')">Field 6</label>
+      <input name="field6" class="mushroom" required pattern="[0-9.]*" [(ngModel)]="field6" (click)="reveal('field6')" [class.revealed]="revealed.has('field6')" />
+    </div>
 
     <button type="submit" class="submit-btn" [ngStyle]="{left: submitX+'px', top: submitY+'px'}" (mouseenter)="hoverSubmit=true" (mouseleave)="hoverSubmit=false" [class.bowser]="hoverSubmit">Submit</button>
 
@@ -61,6 +77,7 @@ export class AppComponent implements OnInit {
   deadVisible = false;
   hoverSubmit = false;
   revealed = new Set<string>();
+  fieldPositions: {[key:string]: {x:number, y:number}} = {};
 
   src=''; src2=''; dest=''; dest2=''; dest3=''; mac=''; modem=''; field6='';
   error='';
@@ -72,6 +89,7 @@ export class AppComponent implements OnInit {
   @ViewChild('deadSound') deadSound!: ElementRef<HTMLAudioElement>;
 
   ngOnInit() {
+    this.randomizeFields();
     setTimeout(() => {
       this.moveSpotlight();
       this.moveSubmit();
@@ -84,6 +102,7 @@ export class AppComponent implements OnInit {
       this.spotlightX = rect.left + rect.width/2;
       this.spotlightY = rect.top + rect.height/2;
     });
+    this.wanderGhost();
   }
 
   reveal(field: string) { this.revealed.add(field); }
@@ -109,18 +128,24 @@ export class AppComponent implements OnInit {
     }
   }
 
-  activateGhost(event: Event) {
-    const input = event.target as HTMLElement;
-    const rect = input.getBoundingClientRect();
-    this.ghostX = 0;
-    this.ghostY = 0;
+  wanderGhost() {
+    setInterval(() => {
+      if (this.ghostVisible) return;
+      this.ghostX = (this.ghostX + Math.random()*10 - 5 + window.innerWidth) % window.innerWidth;
+      this.ghostY = (this.ghostY + Math.random()*10 - 5 + window.innerHeight) % window.innerHeight;
+      const src2Rect = this.getRect('src2');
+      const dest2Rect = this.getRect('dest2');
+      if (this.inRect(this.ghostX, this.ghostY, src2Rect)) this.chase(src2Rect);
+      else if (this.inRect(this.ghostX, this.ghostY, dest2Rect)) this.chase(dest2Rect);
+    }, 100);
+  }
+
+  chase(rect: DOMRect) {
     this.ghostVisible = true;
-    const targetX = rect.left;
-    const targetY = rect.top;
     const interval = setInterval(() => {
       if (!this.ghostVisible) { clearInterval(interval); return; }
-      this.ghostX += Math.sign(targetX - this.ghostX);
-      this.ghostY += Math.sign(targetY - this.ghostY);
+      this.ghostX += Math.sign(rect.left - this.ghostX);
+      this.ghostY += Math.sign(rect.top - this.ghostY);
       const ghostRect = {left:this.ghostX, top:this.ghostY, right:this.ghostX+50, bottom:this.ghostY+50};
       if (ghostRect.right > rect.left && ghostRect.left < rect.right && ghostRect.bottom > rect.top && ghostRect.top < rect.bottom) {
         clearInterval(interval);
@@ -133,6 +158,15 @@ export class AppComponent implements OnInit {
     }, 30);
   }
 
+  inRect(x: number, y: number, rect: DOMRect) {
+    return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+  }
+
+  getRect(field: string): DOMRect {
+    const el = document.querySelector(`input[name="${field}"]`) as HTMLElement;
+    return el.getBoundingClientRect();
+  }
+
   reset() {
     this.src=this.src2=this.dest=this.dest2=this.dest3=this.mac=this.modem=this.field6='';
     this.error='';
@@ -141,6 +175,24 @@ export class AppComponent implements OnInit {
     const rect = this.header.nativeElement.getBoundingClientRect();
     this.spotlightX = rect.left + rect.width/2;
     this.spotlightY = rect.top + rect.height/2;
+    this.randomizeFields();
+  }
+
+  randomizeFields() {
+    const w = window.innerWidth - 200;
+    const h = window.innerHeight - 200;
+    this.fieldPositions['src'] = {x: Math.random()*w, y: Math.random()*h};
+    this.fieldPositions['src2'] = {x: this.fieldPositions['src'].x, y: this.fieldPositions['src'].y + 60};
+    this.fieldPositions['dest'] = {x: Math.random()*w, y: Math.random()*h};
+    this.fieldPositions['dest2'] = {x: this.fieldPositions['dest'].x, y: this.fieldPositions['dest'].y + 60};
+    ['dest3','mac','modem','field6'].forEach(f => {
+      this.fieldPositions[f] = {x: Math.random()*w, y: Math.random()*h};
+    });
+  }
+
+  pos(field: string) {
+    const p = this.fieldPositions[field];
+    return {left: p?.x + 'px', top: p?.y + 'px'};
   }
 
   moveSpotlight() {
@@ -156,7 +208,7 @@ export class AppComponent implements OnInit {
   submit() {
     if (this.src !== this.src2 || this.dest !== this.dest2) {
       this.deadSound.nativeElement.play().catch(()=>{});
-      this.error = 'Fields 1a/1b or 2a/2b do not match.';
+      this.error = 'Source or destination fields do not match.';
       return;
     }
     if (!confirm("The MAC address and modem IP don't check out. Request will be denied. Submit anyway?")) return;

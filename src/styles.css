@@ -6,19 +6,25 @@ body {
   overflow: hidden;
 }
 
+
 .spotlight-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.9);
   pointer-events: none;
-  clip-path: circle(120px at var(--sx) var(--sy));
-  transition: clip-path 0.3s;
+  clip-path: circle(150px at var(--sx) var(--sy));
+  transition: clip-path 3s linear;
   z-index: 1000;
 }
 
 form {
   position: relative;
-  padding: 20px;
+  width: 100vw;
+  height: 100vh;
+}
+
+.field {
+  position: absolute;
 }
 
 label, input {
@@ -68,9 +74,17 @@ label, input {
 .submit-btn {
   position: absolute;
   z-index: 900;
+  background: red;
+  color: white;
+  transition: left 3s linear, top 3s linear;
 }
 
 .error {
   color: red;
+}
+
+.header-image {
+  display: block;
+  margin: 0 auto;
 }
 
