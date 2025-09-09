@@ -10,10 +10,12 @@ body {
 .spotlight-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.9);
   pointer-events: none;
-  clip-path: circle(150px at var(--sx) var(--sy));
-  transition: clip-path 3s linear;
+  background: radial-gradient(circle 150px at var(--sx) var(--sy),
+    rgba(255,255,200,0.2) 0,
+    rgba(255,255,200,0.2) 120px,
+    rgba(0,0,0,0.9) 150px);
+  transition: background 3s linear;
   z-index: 1000;
 }
 
@@ -73,7 +75,7 @@ label, input {
 
 .submit-btn {
   position: absolute;
-  z-index: 900;
+  z-index: 1100;
   background: red;
   color: white;
   transition: left 3s linear, top 3s linear;
