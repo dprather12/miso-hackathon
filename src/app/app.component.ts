@@ -7,6 +7,16 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
+  <!-- Always-visible mute button -->
+  <div class="volume-control">
+    <button (click)="toggleMute()">{{ muted ? 'Unmute' : 'Mute' }}</button>
+  </div>
+
+  <!-- Always-visible volume control -->
+  <div class="volume-control">
+    <input type="range" min="0" max="200" [value]="volumePct" (input)="setVolume($event)" />
+  </div>
+
   <div class="spotlight-overlay" [ngStyle]="{'--sx.px': spotlightX, '--sy.px': spotlightY}"></div>
   <form (ngSubmit)="submit()" #form="ngForm" autocomplete="off">
     <img #header src="assets/firewall-header.png" alt="Firewall Request Form" class="header-image">
@@ -82,6 +92,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   pigsPopup = false;
 
   src=''; dest=''; mac=''; modem='';
+  // Revert to simple element volume (0..1)
+  volumePct = 200; // 0-200 for up to 200% loudness
+
+  muted = false;
+
+  private audioCtx?: AudioContext;
+  private gainNode?: GainNode;
+  private bgSource?: MediaElementAudioSourceNode;
+  private deadSource?: MediaElementAudioSourceNode;
 
   @ViewChild('header') header!: ElementRef;
   @ViewChild('ghost') ghost!: ElementRef<HTMLImageElement>;
@@ -100,11 +119,32 @@ export class AppComponent implements OnInit, AfterViewInit {
     const rect = this.header.nativeElement.getBoundingClientRect();
     this.spotlightX = rect.left + rect.width/2;
     this.spotlightY = rect.top + rect.height/2;
+
+    this.bg.nativeElement.volume = 1;
+    this.deadSound.nativeElement.volume = 1;
+
+    // Try to play sound immediately and retry for 5 seconds
+    let playAttempts = 0;
+    const playInterval = setInterval(() => {
+      this.bg.nativeElement.play().catch(() => {});
+      playAttempts++;
+      if (playAttempts >= 10) clearInterval(playInterval);
+    }, 500);
+
+    // Also start music and unmute if user clicks anywhere on the screen
+    window.addEventListener('click', () => {
+      if (this.muted) {
+        this.muted = false;
+        this.bg.nativeElement.volume = 1;
+        this.deadSound.nativeElement.volume = 1;
+      }
+      this.bg.nativeElement.play().catch(() => {});
+    });
+
     setTimeout(() => {
       this.moveSpotlight();
       this.moveSubmit();
       this.scheduleSubmitMove();
-      this.bg.nativeElement.play().catch(()=>{});
       setInterval(() => this.moveSpotlight(), 3000);
     }, 3000);
   }
@@ -130,6 +170,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.deadY = rect.top;
           this.deadVisible = true;
           this.ghostVisible = false;
+          this.bg.nativeElement.pause();
+          this.deadSound.nativeElement.currentTime = 0;
           this.deadSound.nativeElement.play().catch(()=>{});
           setTimeout(() => { this.gameOver = true; }, 2000);
         }
@@ -201,6 +243,23 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.hoverSubmit = false;
     this.submitBtn.nativeElement.style.transition = '';
     this.scheduleSubmitMove(2000);
+  }
+
+  setVolume(e: Event) {
+    const val = (e.target as HTMLInputElement).valueAsNumber;
+    this.volumePct = Math.min(200, Math.max(0, val));
+    if (this.gainNode) {
+      this.gainNode.gain.value = this.volumePct / 100;
+    }
+  }
+
+  toggleMute() {
+    this.muted = !this.muted;
+    this.bg.nativeElement.volume = this.muted ? 0 : 1;
+    this.deadSound.nativeElement.volume = this.muted ? 0 : 1;
+    if (!this.muted) {
+      this.bg.nativeElement.play().catch(() => {});
+    }
   }
 
   submit() {

@@ -4,6 +4,7 @@ body {
   color: black;
   font-family: sans-serif;
   overflow: hidden;
+  cursor: url('assets/coin.png') 16 16, auto;
 }
 
 
@@ -51,8 +52,8 @@ input {
   background: #eaffea;
 }
 
-input:hover {
-  cursor: url('/assets/mushroom-cursor.png') 16 16, auto;
+input, input:hover, input:focus {
+  cursor: url('assets/coin.png') 16 16, pointer !important;
 }
 
 .revealed {
@@ -92,12 +93,34 @@ input:hover {
   padding: 12px 24px;
   font-size: 1.2em;
   transition: left 3s linear, top 3s linear;
+  cursor: url('assets/star.png') 16 16, pointer;
 }
 
 .submit-btn:hover {
   z-index: 1001;
-  cursor: url('/assets/bowser-cursor.png') 16 16, pointer;
 }
+
+/* Always-visible volume control */
+.volume-control {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 6px 8px;
+  border-radius: 8px;
+  backdrop-filter: blur(2px);
+}
+
+.volume-control input[type="range"] {
+  width: 160px;
+  /* Allow up to 200% */
+}
+
+/* ...existing code... */
 
 .header-image {
   display: block;
@@ -149,4 +172,3 @@ input:hover {
   margin-top: 20px;
   padding: 8px 16px;
 }
-
