@@ -64,7 +64,7 @@ import { FormsModule } from '@angular/forms';
   <div class="custom-confirm" *ngIf="showConfirm">
     <div>
       The MAC address and modem IP don't check out.<br>
-      Do you still want to continue?
+      Request will be denied.  Do you still want to continue?
     </div>
     <div style="margin-top: 20px;">
       <button (click)="onConfirmYes()">Yes</button>
@@ -73,7 +73,7 @@ import { FormsModule } from '@angular/forms';
   </div>
 
   <div class="pigs-popup" *ngIf="pigsPopup">
-    <div>Form submitted. We'll get back to you when...</div>
+    <div>Thank you! The firewall rule will take affect when...</div>
     <img src="assets/pigs-flying.gif" alt="Pigs flying" />
     <button (click)="pigsPopup=false">Close</button>
   </div>

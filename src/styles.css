@@ -1,6 +1,8 @@
 body {
   margin: 0;
-  background: #fffbe6;
+  /* Set background image and stretch/shrink to fit */
+  background: url('assets/background.png') no-repeat center center fixed;
+  background-size: cover;
   color: black;
   font-family: sans-serif;
   overflow: hidden;
@@ -187,4 +189,12 @@ input, input:hover, input:focus, input:active {
 .custom-confirm button {
   margin-top: 20px;
   padding: 8px 16px;
+  background: #198754; /* green */
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+}
+
+.custom-confirm button:hover {
+  background: #157347; /* darker green on hover */
 }
