@@ -52,8 +52,8 @@ input {
   background: #eaffea;
 }
 
-input, input:hover, input:focus {
-  cursor: url('assets/coin.png') 16 16, pointer !important;
+input, input:hover, input:focus, input:active {
+  cursor: url('assets/coin.png') 0 0, pointer !important;
 }
 
 .revealed {
@@ -120,8 +120,6 @@ input, input:hover, input:focus {
   /* Allow up to 200% */
 }
 
-/* ...existing code... */
-
 .header-image {
   display: block;
   margin: 0 auto;
@@ -169,6 +167,24 @@ input, input:hover, input:focus {
 }
 
 .pigs-popup button {
+  margin-top: 20px;
+  padding: 8px 16px;
+}
+
+.custom-confirm {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.5em;
+  z-index: 3000;
+}
+
+.custom-confirm button {
   margin-top: 20px;
   padding: 8px 16px;
 }

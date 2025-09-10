@@ -18,7 +18,7 @@ import { FormsModule } from '@angular/forms';
   </div>
 
   <div class="spotlight-overlay" [ngStyle]="{'--sx.px': spotlightX, '--sy.px': spotlightY}"></div>
-  <form (ngSubmit)="submit()" #form="ngForm" autocomplete="off">
+  <form (ngSubmit)="submit($event)" #form="ngForm" autocomplete="off" novalidate>
     <img #header src="assets/firewall-header.png" alt="Firewall Request Form" class="header-image">
 
     <div class="field" [ngStyle]="pos('src')">
@@ -37,20 +37,20 @@ import { FormsModule } from '@angular/forms';
 
     <div class="field" [ngStyle]="pos('mac')">
       <label [class.revealed]="revealed.has('mac')">MAC Address of your first computer</label>
-      <input name="mac" required pattern="[0-9.]*" autocomplete="off"
+      <input name="mac" required autocomplete="off"
              [(ngModel)]="mac" (click)="reveal('mac')" (focus)="startChase('mac')" (blur)="stopChase()"
              [class.revealed]="revealed.has('mac')" />
     </div>
 
     <div class="field" [ngStyle]="pos('modem')">
       <label [class.revealed]="revealed.has('modem')">IP address of your first 56k baud modem</label>
-      <input name="modem" required pattern="[0-9.]*" autocomplete="off"
+      <input name="modem" required autocomplete="off"
              [(ngModel)]="modem" (click)="reveal('modem')" (focus)="startChase('modem')" (blur)="stopChase()"
              [class.revealed]="revealed.has('modem')" />
     </div>
 
     <button #submitBtn type="submit" class="submit-btn" [ngStyle]="{left: submitX+'px', top: submitY+'px'}"
-            (mouseenter)="pauseSubmit()" (mouseleave)="resumeSubmit()">Submit</button>
+            (mouseenter)="pauseSubmit()" (mouseleave)="resumeSubmit()" (click)="submit($event)">Submit</button>
   </form>
 
   <img src="assets/ghost.png" class="ghost" #ghost [ngStyle]="{left: ghostX+'px', top: ghostY+'px', display: ghostVisible ? 'block':'none'}" />
@@ -59,6 +59,19 @@ import { FormsModule } from '@angular/forms';
     <div>No Firewall for you!</div>
     <button (click)="tryAgain()">Try Again?</button>
   </div>
+
+  <!-- Custom confirm popup with two Yes buttons -->
+  <div class="custom-confirm" *ngIf="showConfirm">
+    <div>
+      The MAC address and modem IP don't check out.<br>
+      Do you still want to continue?
+    </div>
+    <div style="margin-top: 20px;">
+      <button (click)="onConfirmYes()">Yes</button>
+      <button (click)="onConfirmYes()" style="margin-left: 10px;">Yes</button>
+    </div>
+  </div>
+
   <div class="pigs-popup" *ngIf="pigsPopup">
     <div>Form submitted. We'll get back to you when...</div>
     <img src="assets/pigs-flying.gif" alt="Pigs flying" />
@@ -93,6 +106,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   src=''; dest=''; mac=''; modem='';
   // Revert to simple element volume (0..1)
+  showConfirm = false;
   volumePct = 200; // 0-200 for up to 200% loudness
 
   muted = false;
@@ -101,6 +115,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   private gainNode?: GainNode;
   private bgSource?: MediaElementAudioSourceNode;
   private deadSource?: MediaElementAudioSourceNode;
+
+  private spotlightInitialized = false;
 
   @ViewChild('header') header!: ElementRef;
   @ViewChild('ghost') ghost!: ElementRef<HTMLImageElement>;
@@ -116,12 +132,18 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    const rect = this.header.nativeElement.getBoundingClientRect();
-    this.spotlightX = rect.left + rect.width/2;
-    this.spotlightY = rect.top + rect.height/2;
-
     this.bg.nativeElement.volume = 1;
     this.deadSound.nativeElement.volume = 1;
+
+    // Defer to next tick to avoid ExpressionChangedAfterItHasBeenCheckedError
+    setTimeout(() => {
+      if (this.header && !this.spotlightInitialized) {
+        const rect = this.header.nativeElement.getBoundingClientRect();
+        this.spotlightX = rect.left + rect.width/2;
+        this.spotlightY = rect.top + rect.height/2;
+        this.spotlightInitialized = true;
+      }
+    });
 
     // Try to play sound immediately and retry for 5 seconds
     let playAttempts = 0;
@@ -262,16 +284,18 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  submit() {
+  submit(event?: Event) {
+    if (event) event.preventDefault(); // Prevent default form submission
     if (!this.src || !this.dest || !this.mac || !this.modem) {
       alert('all fields need filled out');
       return;
     }
-    if (!confirm("The MAC address and modem IP don't check out. Request will be denied. Submit anyway?")) return;
-    this.pigsPopup = true;
+    this.showConfirm = true;
   }
 
-  reset() {
+  onConfirmYes() {
+    this.showConfirm = false;
+    this.pigsPopup = true;
     this.stopChase();
     this.src = this.dest = this.mac = this.modem = '';
     this.revealed.clear();
